@@ -2342,8 +2342,45 @@ I<em>{Na} &amp;= g</em>{Na}(V<em>{m}-E</em>{Na})<br>
 
   // --- Zoom handler ---
   function handleZoom(event) {
-    event.pre
+    event.preventDefault();
+    const zoomFactor = event.deltaY > 0 ? 0.9 : 1.1;
+    targetScale *= zoomFactor;
+    targetScale = Math.min(Math.max(targetScale, minScale), maxScale);
+  }
 
+  // --- Pan handlers ---
+  function handleMouseDown(event) {
+    isDragging = true;
+    startX = event.clientX - offsetX;
+    startY = event.clientY - offsetY;
+  }
 
+  function handleMouseMove(event) {
+    if (!isDragging) return;
+    offsetX = event.clientX - startX;
+    offsetY = event.clientY - startY;
+  }
+
+  function handleMouseUp() {
+    isDragging = false;
+  }
+
+  // --- Animate transform ---
+  function animate() {
+    currentScale += (targetScale - currentScale) * 0.2;
+    mindmap.style.transformOrigin = "0 0";
+    mindmap.style.transform = `translate(${offsetX}px, ${offsetY}px) scale(${currentScale})`;
+    requestAnimationFrame(animate);
+  }
+
+  // --- Attach events ---
+  mindmap.addEventListener("wheel", throttle(handleZoom, 50), { passive: false });
+  mindmap.addEventListener("mousedown", handleMouseDown);
+  window.addEventListener("mousemove", handleMouseMove);
+  window.addEventListener("mouseup", handleMouseUp);
+
+  // Start animation
+  requestAnimationFrame(animate);
+</script>
 
 </body></html>
