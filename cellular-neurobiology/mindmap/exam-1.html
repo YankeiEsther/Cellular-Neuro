@@ -2305,6 +2305,17 @@ I<em>{Na} &amp;= g</em>{Na}(V<em>{m}-E</em>{Na})<br>
 		</div>
 		</div></div><div id="outline" class=" tree-container"><div class="feature-header"><div class="feature-title">Table Of Contents</div><button class="clickable-icon nav-action-button tree-collapse-all" aria-label="Collapse All"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></svg></button></div></div></div></div><script defer="">let rs = document.querySelector("#right-sidebar"); rs.classList.toggle("is-collapsed", window.innerWidth < 768); rs.style.setProperty("--sidebar-width", localStorage.getItem("sidebar-right-width"));</script></div></div></div></div>
 <script>
+  // Select the mind map container
+  const mindmap = document.querySelector("#center-content"); // updated container
+
+  // Initial zoom scale
+  let targetScale = 1;
+  let currentScale = 1;
+
+  // Zoom limits
+  const minScale = 0.5;
+  const maxScale = 2;
+
   // Debounce helper function
   function debounce(func, wait) {
     let timeout;
@@ -2315,22 +2326,29 @@ I<em>{Na} &amp;= g</em>{Na}(V<em>{m}-E</em>{Na})<br>
     };
   }
 
-  // Your zoom handler
+  // Zoom handler
   function handleZoom(event) {
-    event.preventDefault(); // prevent default scroll zoom
-    const scaleAmount = event.deltaY > 0 ? 0.9 : 1.1; // example zoom factor
-    const mindmap = document.querySelector("#mindmap"); // replace with your mindmap container ID
-    const currentScale = parseFloat(mindmap.getAttribute("data-scale")) || 1;
-    const newScale = Math.min(Math.max(currentScale * scaleAmount, 0.5), 2); // limits 0.5x to 2x
-    mindmap.style.transform = `scale(${newScale})`;
-    mindmap.setAttribute("data-scale", newScale);
+    event.preventDefault(); // prevent default scroll behavior
+    targetScale *= event.deltaY > 0 ? 0.9 : 1.1; // zoom in/out
+    targetScale = Math.min(Math.max(targetScale, minScale), maxScale); // clamp zoom
   }
 
-  // Wrap the zoom handler with debounce
-  const debouncedZoom = debounce(handleZoom, 100); // 100ms delay
+  // Smooth animation using requestAnimationFrame
+  function animateZoom() {
+    currentScale += (targetScale - currentScale) * 0.2; // interpolation
+    mindmap.style.transformOrigin = "0 0"; // top-left anchor
+    mindmap.style.transform = `scale(${currentScale})`;
+    requestAnimationFrame(animateZoom);
+  }
 
-  // Attach event listener to the container
-  const mindmapContainer = document.querySelector("#mindmap"); // replace with your container ID
-  mindmapContainer.addEventListener("wheel", debouncedZoom);
+  // Wrap zoom handler with debounce
+  const debouncedZoom = debounce(handleZoom, 50); // adjust 50ms if needed
+
+  // Attach wheel event
+  mindmap.addEventListener("wheel", debouncedZoom);
+
+  // Start animation loop
+  requestAnimationFrame(animateZoom);
 </script>
+
 </body></html>
