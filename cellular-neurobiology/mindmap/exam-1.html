@@ -2305,7 +2305,7 @@ I<em>{Na} &amp;= g</em>{Na}(V<em>{m}-E</em>{Na})<br>
 		</div>
 		</div></div><div id="outline" class=" tree-container"><div class="feature-header"><div class="feature-title">Table Of Contents</div><button class="clickable-icon nav-action-button tree-collapse-all" aria-label="Collapse All"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></svg></button></div></div></div></div><script defer="">let rs = document.querySelector("#right-sidebar"); rs.classList.toggle("is-collapsed", window.innerWidth < 768); rs.style.setProperty("--sidebar-width", localStorage.getItem("sidebar-right-width"));</script></div></div></div></div>
 <script>
-  const mindmap = document.querySelector("#center-content");
+  const mindmap = document.querySelector("#center-content"); // Update if needed
 
   // Zoom variables
   let targetScale = 1;
@@ -2318,6 +2318,27 @@ I<em>{Na} &amp;= g</em>{Na}(V<em>{m}-E</em>{Na})<br>
   let offsetY = 0;
   let isDragging = false;
   let startX, startY;
+
+  // Throttle helper
+  function throttle(func, limit) {
+    let lastFunc;
+    let lastRan;
+    return function(...args) {
+      const context = this;
+      if (!lastRan) {
+        func.apply(context, args);
+        lastRan = Date.now();
+      } else {
+        clearTimeout(lastFunc);
+        lastFunc = setTimeout(function() {
+          if ((Date.now() - lastRan) >= limit) {
+            func.apply(context, args);
+            lastRan = Date.now();
+          }
+        }, limit - (Date.now() - lastRan));
+      }
+    };
+  }
 
   // --- Zoom handler ---
   function handleZoom(event) {
@@ -2346,14 +2367,14 @@ I<em>{Na} &amp;= g</em>{Na}(V<em>{m}-E</em>{Na})<br>
 
   // --- Animate transform ---
   function animate() {
-    currentScale += (targetScale - currentScale) * 0.2; // smooth zoom
+    currentScale += (targetScale - currentScale) * 0.2;
     mindmap.style.transformOrigin = "0 0";
     mindmap.style.transform = `translate(${offsetX}px, ${offsetY}px) scale(${currentScale})`;
     requestAnimationFrame(animate);
   }
 
-  // --- Event listeners ---
-  mindmap.addEventListener("wheel", handleZoom, { passive: false });
+  // --- Attach events ---
+  mindmap.addEventListener("wheel", throttle(handleZoom, 50), { passive: false }); // limit to every 50ms
   mindmap.addEventListener("mousedown", handleMouseDown);
   window.addEventListener("mousemove", handleMouseMove);
   window.addEventListener("mouseup", handleMouseUp);
@@ -2361,5 +2382,6 @@ I<em>{Na} &amp;= g</em>{Na}(V<em>{m}-E</em>{Na})<br>
   // Start animation
   requestAnimationFrame(animate);
 </script>
+
 
 </body></html>
