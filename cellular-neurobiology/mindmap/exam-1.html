@@ -2305,7 +2305,7 @@ I<em>{Na} &amp;= g</em>{Na}(V<em>{m}-E</em>{Na})<br>
 		</div>
 		</div></div><div id="outline" class=" tree-container"><div class="feature-header"><div class="feature-title">Table Of Contents</div><button class="clickable-icon nav-action-button tree-collapse-all" aria-label="Collapse All"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></svg></button></div></div></div></div><script defer="">let rs = document.querySelector("#right-sidebar"); rs.classList.toggle("is-collapsed", window.innerWidth < 768); rs.style.setProperty("--sidebar-width", localStorage.getItem("sidebar-right-width"));</script></div></div></div></div>
 <script>
-  const mindmap = document.querySelector("#parsed-feature-container"); // alternate container
+  const mindmap = document.querySelector("#center-content"); // Update if needed
 
   // Zoom variables
   let targetScale = 1;
@@ -2374,7 +2374,7 @@ I<em>{Na} &amp;= g</em>{Na}(V<em>{m}-E</em>{Na})<br>
   }
 
   // --- Attach events ---
-  mindmap.addEventListener("wheel", throttle(handleZoom, 50), { passive: false });
+  mindmap.addEventListener("wheel", throttle(handleZoom, 50), { passive: false }); // limit to every 50ms
   mindmap.addEventListener("mousedown", handleMouseDown);
   window.addEventListener("mousemove", handleMouseMove);
   window.addEventListener("mouseup", handleMouseUp);
@@ -2382,5 +2382,6 @@ I<em>{Na} &amp;= g</em>{Na}(V<em>{m}-E</em>{Na})<br>
   // Start animation
   requestAnimationFrame(animate);
 </script>
+
 
 </body></html>
